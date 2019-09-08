@@ -40,3 +40,7 @@ INSERT INTO Books (Name, Creation_year, Genre_id, Author_id) VALUES ('Borodino',
 INSERT INTO Books (Name, Creation_year, Genre_id, Author_id) VALUES ('Crime and Punishment',1866,2,3);
 
 
+SELECT b.name, b.creation_year, g.genre, a.name
+FROM books b 	JOIN genres g ON g.id=b.genre_id
+				JOIN authors a ON a.id=b.author_id
+WHERE a.name = 'Pushkin' or a.name='Lermontov' or g.genre = 'Detective' or b.creation_year BETWEEN 1833 AND 1837;
