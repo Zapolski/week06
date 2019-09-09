@@ -1,6 +1,7 @@
 package by.zapolski.sbcrudrestful.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
  
@@ -31,6 +32,21 @@ public class BookbaseDAO extends JdbcDaoSupport{
         List<String> list = this.getJdbcTemplate().queryForList(sql, String.class, //
                 "%" + searchName + "%");
         return list;
-    }	
+    }
+    
+    // Map<String columnName, Object value>
+    public List<Map<String, Object>> queryForList_ListMap() {
+ 
+        String sql = "SELECT b.name, b.creation_year, g.genre, a.name\r\n" + 
+        		"FROM books b 	JOIN genres g ON g.id=b.genre_id\r\n" + 
+        		"				JOIN authors a ON a.id=b.author_id\r\n" + 
+        		"WHERE a.name = 'Pushkin' or a.name='Lermontov' or g.genre = 'Detective' or b.creation_year BETWEEN 1833 AND 1837";
+ 
+        // List<Map<String, Object>> queryForList(String sql)
+        List<Map<String, Object>> list = this.getJdbcTemplate().queryForList(sql);
+ 
+        return list;
+    }
+     
 
 }
