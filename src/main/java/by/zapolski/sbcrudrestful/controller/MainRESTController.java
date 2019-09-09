@@ -1,9 +1,11 @@
 package by.zapolski.sbcrudrestful.controller;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -69,27 +71,19 @@ public class MainRESTController {
 	    zipOutputStream.close();
 	}
 	
-	
+	@RequestMapping(value="/csv", produces="application/zip")
+	public void csvFile(HttpServletResponse response) throws IOException {
 
-    public static void main(String[] args) throws IOException {
-    	String SAMPLE_CSV_FILE = "./sample.csv";
-    	try (
-            BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_FILE));
+	    //setting headers  
+	    response.setStatus(HttpServletResponse.SC_OK);
+	    response.addHeader("Content-Disposition", "attachment; filename=\"test.zip\"");
 
-            CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-                    .withHeader("ID", "Name", "Designation", "Company"));
-        ) {
-            csvPrinter.printRecord("1", "Sundar Pichai ♥", "CEO", "Google");
-            csvPrinter.printRecord("2", "Satya Nadella", "CEO", "Microsoft");
-            csvPrinter.printRecord("3", "Tim cook", "CEO", "Apple");
+	    ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
+	    BufferedWriter bw = new BufferedWriter(response.getOutputStream());
+	    
+	    
 
-            csvPrinter.printRecord(Arrays.asList("4", "Mark Zuckerberg", "CEO", "Facebook"));
-
-            csvPrinter.flush();            
-        }
-    	
-    }
-
+	}
 	
 }
 
