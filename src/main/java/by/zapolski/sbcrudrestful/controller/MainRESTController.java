@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -71,18 +73,31 @@ public class MainRESTController {
 	    zipOutputStream.close();
 	}
 	
-	@RequestMapping(value="/csv", produces="application/zip")
+	@RequestMapping(value="/csv", produces="application/csv")
 	public void csvFile(HttpServletResponse response) throws IOException {
 
 	    //setting headers  
 	    response.setStatus(HttpServletResponse.SC_OK);
-	    response.addHeader("Content-Disposition", "attachment; filename=\"test.zip\"");
-
-	    ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
-	    BufferedWriter bw = new BufferedWriter(response.getOutputStream());
+	    response.addHeader("Content-Disposition", "attachment; filename=\"books.csv\"");
 	    
+	    List<Map<String,Object>> list = bookbaseDAO.queryForList_ListMap();
 	    
-
+	    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+	    
+	    //String[] header = (String[]) list.get(0).keySet().toArray();
+	    //CSVPrinter csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.DEFAULT.withHeader(header));
+	    CSVPrinter csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.DEFAULT.withHeader());
+		
+		for (Map<String, Object> map : list) {
+			List<String> row = new ArrayList<>();
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				row.add(entry.getValue().toString());
+			}
+			csvPrinter.printRecord(row.toArray());
+		}
+		csvPrinter.flush();
+		csvPrinter.close();
+		bufferedWriter.close();
 	}
 	
 }
