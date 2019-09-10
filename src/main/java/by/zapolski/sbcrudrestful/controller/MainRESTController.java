@@ -34,20 +34,21 @@ public class MainRESTController {
 	@RequestMapping(value="/books", produces="application/csv")
 	public void csvFile(@RequestParam(value = "author", required = false) String[] author, 
 						@RequestParam(value = "genre", required = false) String[] genre,
-						@RequestParam(value = "from", required = false) String[] from,
-						@RequestParam(value = "to", required = false) String[] to,
+						@RequestParam(value = "from", required = false) String from,
+						@RequestParam(value = "to", required = false) String to,
 						HttpServletResponse response) throws IOException {
 		
-//		if (author != null) {
-//			for (String str: author) {
-//				System.out.println(str);
-//			}			
-//		}
-
+		if ( author==null && genre==null && from==null && to==null) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.setContentType("text/html");
+			response.getWriter().write("At least one filter parameter required");
+			return;
+		}
+		
 	    response.setStatus(HttpServletResponse.SC_OK);
 	    response.addHeader("Content-Disposition", "attachment; filename=\"books.csv\"");
 	    
-	    List<Map<String,Object>> list = bookbaseDAO.queryForBooks();
+	    List<Map<String,Object>> list = bookbaseDAO.queryForBooks(author, genre, from, to);
 //		for (Map<String, Object> map : list) {
 //			System.out.println(map);
 //		}
