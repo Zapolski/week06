@@ -40,7 +40,7 @@ public class BookbaseDAO extends JdbcDaoSupport{
         String sql = "SELECT b.name as \"Book Title\", b.creation_year as \"Creation Year\", g.genre as \"Genre\", a.name as \"Author\"\r\n" + 
         		"FROM books b 	JOIN genres g ON g.id=b.genre_id\r\n" + 
         		"				JOIN authors a ON a.id=b.author_id\r\n" + 
-        		"WHERE a.name = 'Pushkin' or a.name='Lermontov' or g.genre = 'Detective' or b.creation_year BETWEEN 1833 AND 1837";
+        		"WHERE a.name = 'Pushkin' or a.name='Lermontov' or g.genre = 'Detective' or b.creation_year>=1833 AND b.creation_year<=1837";
         		//"WHERE a.name = 'Gogol'";
  
         // List<Map<String, Object>> queryForList(String sql)
