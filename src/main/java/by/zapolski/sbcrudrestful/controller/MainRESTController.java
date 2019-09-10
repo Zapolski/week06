@@ -22,6 +22,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,54 +40,31 @@ public class MainRESTController {
 		return "Hello from my Mini Rest Service";
 	}
 	
-	@RequestMapping("/books")
-	@ResponseBody
-	public String books() {
-		return bookbaseDAO.queryForList_ListMap().toString();
-	}	
-	
-	@RequestMapping(value="/zip", produces="application/zip")
-	public void zipFiles(HttpServletResponse response) throws IOException {
+	@RequestMapping(value="/books", produces="application/csv")
+	public void csvFile(@RequestParam(value = "author", required = false) String[] author, 
+						@RequestParam(value = "genre", required = false) String[] genre,
+						@RequestParam(value = "from", required = false) String[] from,
+						@RequestParam(value = "to", required = false) String[] to,
+						HttpServletResponse response) throws IOException {
+		
+//		if (author != null) {
+//			for (String str: author) {
+//				System.out.println(str);
+//			}			
+//		}
 
-	    //setting headers  
-	    response.setStatus(HttpServletResponse.SC_OK);
-	    response.addHeader("Content-Disposition", "attachment; filename=\"test.zip\"");
-
-	    ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
-
-	    // create a list to add files to be zipped
-	    ArrayList<File> files = new ArrayList<>(2);
-	    files.add(new File("database.txt"));
-
-	    // package files
-	    for (File file : files) {
-	        //new zip entry and copying inputstream with file to zipOutputStream, after all closing streams
-	        zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
-	        FileInputStream fileInputStream = new FileInputStream(file);
-
-	        IOUtils.copy(fileInputStream, zipOutputStream);
-
-	        fileInputStream.close();
-	        zipOutputStream.closeEntry();
-	    }    
-
-	    zipOutputStream.close();
-	}
-	
-	@RequestMapping(value="/csv", produces="application/csv")
-	public void csvFile(HttpServletResponse response) throws IOException {
-
-	    //setting headers  
 	    response.setStatus(HttpServletResponse.SC_OK);
 	    response.addHeader("Content-Disposition", "attachment; filename=\"books.csv\"");
 	    
-	    List<Map<String,Object>> list = bookbaseDAO.queryForList_ListMap();
+	    List<Map<String,Object>> list = bookbaseDAO.queryForBooks();
+//		for (Map<String, Object> map : list) {
+//			System.out.println(map);
+//		}
 	    
 	    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
 	    
-	    //String[] header = (String[]) list.get(0).keySet().toArray();
-	    //CSVPrinter csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.DEFAULT.withHeader(header));
-	    CSVPrinter csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.DEFAULT.withHeader());
+	    String[] header = list.get(0).keySet().toArray(new String[0]);
+	    CSVPrinter csvPrinter = new CSVPrinter(bufferedWriter, CSVFormat.DEFAULT.withHeader(header));
 		
 		for (Map<String, Object> map : list) {
 			List<String> row = new ArrayList<>();
