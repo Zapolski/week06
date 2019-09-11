@@ -17,7 +17,7 @@ public class BookbaseDAO extends JdbcDaoSupport {
 		this.setDataSource(dataSource);
 	}
 
-	public List<Map<String, Object>> queryForBooks(String[] author, String[] genre, String from, String to) {
+	public List<Map<String, Object>> queryForBooks(String[] author, String[] genre, Integer from, Integer to) {
 		String sql = "SELECT b.name as \"Book Title\", b.creation_year as \"Creation Year\", g.genre as \"Genre\", a.name as \"Author\""
 				+ "FROM books b 	JOIN genres g ON g.id=b.genre_id"
 				+ "				JOIN authors a ON a.id=b.author_id";
