@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface BookbaseDao {
-	List<Map<String, Object>> queryForBooks(String partQuery);
+	List<Map<String, Object>> queryForBooks(String partQuery); 
 }
