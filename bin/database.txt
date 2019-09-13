@@ -1,0 +1,46 @@
+-- genre (id, name)
+-- author (id, name, date_of_birth)
+-- book (id, name, creation_year, genre_id, author_id)
+
+CREATE TABLE Genres
+(
+    Id SERIAL PRIMARY KEY,
+    Genre CHARACTER VARYING(30) NOT NULL UNIQUE 
+);
+
+INSERT INTO Genres (Genre) VALUES ('Fantasy'); 		-- 1
+INSERT INTO Genres (Genre) VALUES ('Detective'); 	-- 2
+INSERT INTO Genres (Genre) VALUES ('Novel');		-- 3
+INSERT INTO Genres (Genre) VALUES ('Poetry');		-- 4
+
+CREATE TABLE Authors
+(
+    Id SERIAL PRIMARY KEY,
+    Name CHARACTER VARYING(30) NOT NULL,
+	Date_of_birth DATE
+);
+
+INSERT INTO Authors (Name, Date_of_birth) VALUES ('Pushkin','1799-05-26'); 		-- 1
+INSERT INTO Authors (Name, Date_of_birth) VALUES ('Lermontov','1814-10-15'); 	-- 2
+INSERT INTO Authors (Name, Date_of_birth) VALUES ('Dostoevskiy','1821-11-11'); 	-- 3
+
+CREATE TABLE Books
+(
+    Id SERIAL PRIMARY KEY,
+    Name CHARACTER VARYING(30) NOT NULL,
+	Creation_year SMALLINT NOT NULL,
+	Genre_id INTEGER,
+	Author_id INTEGER,
+	FOREIGN KEY (Genre_id) REFERENCES Genres (Id),
+	FOREIGN KEY (Author_id) REFERENCES Authors (Id)
+);
+
+INSERT INTO Books (Name, Creation_year, Genre_id, Author_id) VALUES ('Onegin',1833,3,1);
+INSERT INTO Books (Name, Creation_year, Genre_id, Author_id) VALUES ('Borodino',1837,4,2);
+INSERT INTO Books (Name, Creation_year, Genre_id, Author_id) VALUES ('Crime and Punishment',1866,2,3);
+
+
+SELECT b.name, b.creation_year, g.genre, a.name
+FROM books b 	JOIN genres g ON g.id=b.genre_id
+				JOIN authors a ON a.id=b.author_id
+WHERE a.name = 'Pushkin' or a.name='Lermontov' or g.genre = 'Detective' or b.creation_year BETWEEN 1833 AND 1837;
